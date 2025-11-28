@@ -1,1 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>装備強化シミュレーター</title>
 
+<style>
+body { font-family: sans-serif; padding: 20px; }
+.select-area { margin-bottom: 20px; }
+.item-block { margin-bottom: 12px; }
+.result { margin-top: 20px; padding: 10px; background: #f5f5f5; }
+h2 { margin-top: 30px; }
+</style>
+</head>
+
+<body>
+<h1>装備強化シミュレーター</h1>
+
+<label>
+  <input type="checkbox" id="useShield" checked>
+  盾を使う
+</label>
+
+<div id="formArea" class="select-area"></div>
+
+<button onclick="resetAll()">リセット</button>
+
+<h2>合計ステータス</h2>
+<div id="totalStats">まだ素材が選択されていません</div>
+
+<h2>素材内訳（発生中のセット効果）</h2>
+<div id="setDetail">なし</div>
+
+<script>
+/* ======== 編集用 素材データ（ここだけ後から自由に編集OK） ======== */
+const MATERIALS = {
+  "ソブリンの遺産": {
+    set2: { "物理攻撃力": 121, "物理防御力": 121 },
+    set3: { "魔法防御力": 121 },
+    set4: { "HP": 1100 }
+  },
+  "ラヴェジャーの支配": {
+    set2: { "物理攻撃力": 121, "物理防御力": 121 },
+    set3: { "魔法防御力": 121 },
+    set4: { "HP": 1100 }
+  },
+  "神聖なる盾": {
+    set2: { "物理防御力": 121, "魔法防御力": 121 },
+    set3: { "HP": 1100 },
+    set4: { "回復倍率": "10%" }
+  },
+  "テンペストバウンド": {
+    set2: { "物理攻撃力": 121, "物理防御力": 121 },
+    set3: { "魔法防御力": 121 },
+    set4: { "HP": 1100 }
+  },
+  "ブレードウィーバー": {
+    set2: { "物理攻撃力": 121, "物理防御力": 121 },
+    set3: { "魔法防御力": 121 },
+    set4: { "HP": 1100 }
+  },
+  "スペルファイア": {
+    set2: { "魔法攻撃力": 121, "魔法防御力": 121 },
+    set3: { "魔法防御力": 121 },
+    set4: { "HP": 1100 }
+  },
+  "アストラル・コンフラックス": {
+    set2: { "魔法攻撃力": 121, "魔法防御力": 121 },
+    set3: { "魔法防御力": 121 },
+    set4: { "HP": 1100 }
+  },
+  "セラフィックグレース": {
+    set2: { "物理防御力": 121, "HP": 1100 },
+    set3: { "MP": 1100 },
+    set4: { "回復倍率": "10%" }
+  },
+  "勇気の砦": {
+    set2: { "HP再生": 99, "MP再生": 99 },
+    set3: { "回避": 66 },
+    set4: { "移動速度": 4 }
+  },
+  "ドラゴンクロー": {
+    set2: { "HP再生": 99, "命中": 77 },
+    set3: { "クリティカル発生率": "5%" },
+    set4: { "クリティカル倍率": "10%" }
+  },
+  "エルドリッチ・カタリスト": {
+    set2: { "HP再生": 99, "MP再生": 99 },
+    set3: { "クリティカル発生率": "5%" },
+    set4: { "クリティカル倍率": "10%" }
+  },
+  "神聖なる調和": {
+    set2: { "HP再生": 99, "MP再生": 100 },
+    set3: { "回避": 66 },
+    set4: { "回復倍率": "10%" }
+  }
+};
+
+/* ======== 装備スロット ======== */
+const ALL_SLOTS = [
+  "武器","頭","胴体","腕","足","首飾り",
+  "指輪1","指輪2","イヤリング1","イヤリング2","腕輪","かばん","盾"
+];
+
+/* ======== UI生成 ======== */
+let currentSlots = [...ALL_SLOTS];
+const formArea = document.getElementById("formArea");
+
+function buildUI() {
+  formArea.innerHTML = "";
+  currentSlots.forEach(slot => {
+    const block = document.createElement("div");
+    block.className = "item-block";
+
+    block.innerHTML = `
+      <label>${slot}</label><br>
+      <select data-slot="${slot}">
+        <option value="">未選択</option>
+        ${Object.keys(MATERIALS).map(m => `<option value="${m}">${m}</option>`).join("")}
+      </select>
+    `;
+    formArea.appendChild(block);
+  });
+}
+buildUI();
+
+/* ======== 計算 ======== */
+function updateAll() {
+  const selections = [...document.querySelectorAll("select")].map(s => s.value).filter(v => v);
+  if (selections.length === 0) {
+    document.getElementById("totalStats").innerText = "まだ素材が選択されていません";
+    document.getElementById("setDetail").innerText = "なし";
+    return;
+  }
+
+  const countMap = {};
+  selections.forEach(v => countMap[v] = (countMap[v] || 0) + 1);
+
+  let total = {};
+  let detailHtml = "";
+
+  for (const [name, count] of Object.entries(countMap)) {
+    const data = MATERIALS[name];
+    let setName = "";
+    let effect = null;
+
+    if (count >= 4) { setName = "セット4"; effect = data.set4; }
+    else if (count === 3) { setName = "セット3"; effect = data.set3; }
+    else if (count === 2) { setName = "セット2"; effect = data.set2; }
+
+    if (effect) {
+      detailHtml += `<div>${name}（${count}個 → ${setName}）</div>`;
+      for (const [key, val] of Object.entries(effect)) {
+        total[key] = (total[key] || 0) + (typeof val === "number" ? val : 0);
+      }
+    }
+  }
+
+  document.getElementById("setDetail").innerHTML = detailHtml || "なし";
+
+  document.getElementById("totalStats").innerHTML =
+    Object.entries(total).map(([k, v]) => `${k}：${v}`).join("<br>");
+}
+
+/* ======== 盾ON/OFF ======== */
+document.getElementById("useShield").addEventListener("change", e => {
+  if (e.target.checked) {
+    if (!currentSlots.includes("盾")) currentSlots.push("盾");
+  } else {
+    currentSlots = currentSlots.filter(s => s !== "盾");
+  }
+  buildUI();
+});
+
+/* ======== セレクトイベント ======== */
+document.addEventListener("change", updateAll);
+
+/* ======== リセット ======== */
+function resetAll() {
+  document.querySelectorAll("select").forEach(s => s.value = "");
+  updateAll();
+}
+</script>
+</body>
+</html>
