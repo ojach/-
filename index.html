@@ -183,11 +183,15 @@ function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt
 /* ========== 効果一覧テーブル生成 ========== */
 function updateEffectTable() {
 
-  // ステータスオブジェクト → "物理攻撃力：121 / HP：1100" の形に整形
-  const formatStats = obj =>
-    obj ? Object.entries(obj).map(([k, v]) => `${k}：${v}`).join(' / ') : '';
+  // ステータスオブジェクト → 改行区切りの「ステ名だけ」へ変換
+  const formatStats = obj => {
+    if (!obj) return '';
+    return Object.keys(obj)
+      .map(k => k.replace(/：.*/, "")) // 数値部分カット
+      .join('<br>');
+  };
 
-  // レアリティのセットを配列でまとめる
+  // レアリティごとにセットをまとめる
   const getRankText = (data, rankName, keys) => {
     if (!data[rankName]) return '';
     return keys
@@ -222,7 +226,7 @@ function updateEffectTable() {
         <thead>
           <tr>
             <th>素材</th>
-            <th class="uncommon-head">アンコモ</th>
+            <th class="uncommon-head">アンコモン</th>
             <th class="rare-head">レア</th>
             <th class="legend-head">レジェンダリー</th>
           </tr>
