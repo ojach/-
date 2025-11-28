@@ -181,26 +181,57 @@ function buildForm(){
 function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 /* ========== 効果一覧テーブル生成 ========== */
-function updateEffectTable(){
-  // Build table of all materials and each rank
-  const mats = Object.keys(MATERIALS);
-  let html = '<table class="effect-table"><thead><tr><th>素材</th><th>アンコモン </th><th>レア </th><th>レジェンダリー </th></tr></thead><tbody>';
-  mats.forEach(name=>{
-    const d = MATERIALS[name];
-    // helper to stringify an object
-    const fmt = obj => {
-      if(!obj) return '';
-      return Object.entries(obj).map(([k,v]) => `${k}：${v}`).join(' / ');
-    };
-    const uncommon = d.uncommon && d.uncommon.set4 ? fmt(d.uncommon.set4) : '';
-    const rare4 = d.rare && d.rare.set4 ? fmt(d.rare.set4) : ''
-    const leg4 = d.legendary && d.legendary.set4 ? fmt(d.legendary.set4) : '';
-    html += '<tr><td>'+escapeHtml(name)+'</td><td>'+escapeHtml(uncommon)+'</td><td>'+escapeHtml(rare4)+'</td><td>'+escapeHtml(leg4)+'</td></tr>';
-  });
-  html += '</tbody></table>';
-  effectTableArea.innerHTML = html;
-}
+function updateEffectTable() {
 
+  // ステータスオブジェクト → "物理攻撃力：121 / HP：1100" の形に整形
+  const formatStats = obj =>
+    obj ? Object.entries(obj).map(([k, v]) => `${k}：${v}`).join(' / ') : '';
+
+  // レアリティのセットを配列でまとめる
+  const getRankText = (data, rankName, keys) => {
+    if (!data[rankName]) return '';
+    return keys
+      .map(k => data[rankName][k] ? formatStats(data[rankName][k]) : '')
+      .filter(Boolean)
+      .join('<hr class="split">'); // セット間の区切り線
+  };
+
+  const mats = Object.keys(MATERIALS);
+  let rows = '';
+
+  mats.forEach(name => {
+    const d = MATERIALS[name];
+
+    const uncommon = getRankText(d, 'uncommon', ['set4']);
+    const rare = getRankText(d, 'rare', ['set4']);
+    const legendary = getRankText(d, 'legendary', ['set4']);
+
+    rows += `
+      <tr>
+        <td class="mat-name">${escapeHtml(name)}</td>
+        <td class="uncommon-cell">${uncommon}</td>
+        <td class="rare-cell">${rare}</td>
+        <td class="legend-cell">${legendary}</td>
+      </tr>
+    `;
+  });
+
+  effectTableArea.innerHTML = `
+    <div class="scroll-table">
+      <table class="effect-table">
+        <thead>
+          <tr>
+            <th>素材</th>
+            <th class="uncommon-head">アンコモ</th>
+            <th class="rare-head">レア</th>
+            <th class="legend-head">レジェンダリー</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
 /* ========== 計算ロジック ========== */
 /* ユーティリティ：値を数値化または % の扱いを分けて返す */
 function parseValue(val){
