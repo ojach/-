@@ -184,7 +184,7 @@ function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt
 function updateEffectTable(){
   // Build table of all materials and each rank
   const mats = Object.keys(MATERIALS);
-  let html = '<table class="effect-table"><thead><tr><th>素材</th><th>アンコモン (セット4)</th><th>レア (セット3 / セット4)</th><th>レジェンダリー (セット2 / 3 / 4)</th></tr></thead><tbody>';
+  let html = '<table class="effect-table"><thead><tr><th>素材</th><th>アンコモン </th><th>レア </th><th>レジェンダリー </th></tr></thead><tbody>';
   mats.forEach(name=>{
     const d = MATERIALS[name];
     // helper to stringify an object
@@ -193,10 +193,7 @@ function updateEffectTable(){
       return Object.entries(obj).map(([k,v]) => `${k}：${v}`).join(' / ');
     };
     const uncommon = d.uncommon && d.uncommon.set4 ? fmt(d.uncommon.set4) : '';
-    const rare3 = d.rare && d.rare.set3 ? fmt(d.rare.set3) : '';
-    const rare4 = d.rare && d.rare.set4 ? fmt(d.rare.set4) : '';
-    const leg2 = d.legendary && d.legendary.set2 ? fmt(d.legendary.set2) : '';
-    const leg3 = d.legendary && d.legendary.set3 ? fmt(d.legendary.set3) : '';
+    const rare4 = d.rare && d.rare.set4 ? fmt(d.rare.set4) : ''
     const leg4 = d.legendary && d.legendary.set4 ? fmt(d.legendary.set4) : '';
     html += '<tr><td>'+escapeHtml(name)+'</td><td>'+escapeHtml(uncommon)+'</td><td>'+escapeHtml(rare3+(rare4?(' / '+rare4):''))+'</td><td>'+escapeHtml((leg2?leg2+' / ':'')+(leg3?leg3+' / ':'')+(leg4?leg4:''))+'</td></tr>';
   });
