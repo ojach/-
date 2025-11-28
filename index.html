@@ -181,28 +181,40 @@ function buildForm(){
 function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 /* ========== 効果一覧テーブル生成 ========== */
-function updateEffectTable(){
-  // Build table of all materials and each rank
-  const mats = Object.keys(MATERIALS);
-  let html = '<table class="effect-table"><thead><tr><th>素材</th><th>アンコモン (セット4)</th><th>レア (セット3 / セット4)</th><th>レジェンダリー (セット2 / 3 / 4)</th></tr></thead><tbody>';
-  mats.forEach(name=>{
-    const d = MATERIALS[name];
-    // helper to stringify an object
-    const fmt = obj => {
-      if(!obj) return '';
-      return Object.entries(obj).map(([k,v]) => `${k}：${v}`).join(' / ');
-    };
-    const uncommon = d.uncommon && d.uncommon.set4 ? fmt(d.uncommon.set4) : '';
-    const rare3 = d.rare && d.rare.set3 ? fmt(d.rare.set3) : '';
-    const rare4 = d.rare && d.rare.set4 ? fmt(d.rare.set4) : '';
-    const leg2 = d.legendary && d.legendary.set2 ? fmt(d.legendary.set2) : '';
-    const leg3 = d.legendary && d.legendary.set3 ? fmt(d.legendary.set3) : '';
-    const leg4 = d.legendary && d.legendary.set4 ? fmt(d.legendary.set4) : '';
-    html += '<tr><td>'+escapeHtml(name)+'</td><td>'+escapeHtml(uncommon)+'</td><td>'+escapeHtml(rare3+(rare4?(' / '+rare4):''))+'</td><td>'+escapeHtml((leg2?leg2+' / ':'')+(leg3?leg3+' / ':'')+(leg4?leg4:''))+'</td></tr>';
-  });
-  html += '</tbody></table>';
-  effectTableArea.innerHTML = html;
-}
+<div class="scroll-table">
+<table class="material-table">
+<thead>
+<tr>
+  <th>素材</th>
+  <th class="uncommon">アンコモン</th>
+  <th class="rare">レア</th>
+  <th class="legendary">レジェンダリー（セット4）</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+  <td>ソブリンの遺産</td>
+  <td>物理防御力121|HP1100</td>
+  <td>物理防御力121|魔法防御力121|HP1100</td>
+  <td>物理攻撃力121|物理防御力121|魔法防御121|HP1100</td>
+</tr>
+
+<tr>
+  <td>ラヴェジャーの支配</td>
+  <td>物理攻撃力121｜HP1100</td>
+  <td>物理攻撃力121｜物理防御力121</td>
+  <td>HP1100</td>
+  <td>物理攻撃力121｜物理防御力121</td>
+  <td>魔法防御力121</td>
+  <td>HP1100</td>
+</tr>
+
+<!-- 以下、他の素材も同じ形式で追加してOK -->
+
+</tbody>
+</table>
+</div>
 
 /* ========== 計算ロジック ========== */
 /* ユーティリティ：値を数値化または % の扱いを分けて返す */
