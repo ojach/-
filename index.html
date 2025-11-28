@@ -30,7 +30,6 @@
   table.effect-table{width:100%;border-collapse:collapse;font-size:11px}
   table.effect-table th, table.effect-table td{border:1px solid var(--line);padding:6px;text-align:left}
   .preset-list{max-height:140px;overflow:auto;margin-top:6px}
-  .free-note {margin-top: 40px;}
   /* responsive */
   @media (max-width:900px){
     .container{grid-template-columns:1fr}
@@ -38,6 +37,8 @@
     .card{padding:10px}
     label.slot-label{min-width:72px}
   }
+
+  .free-note {margin-top: 40px;}
 </style>
 </head>
 <body>
@@ -86,7 +87,7 @@
   <label for="freeText">フリーテキスト：</label><br>
   <textarea id="freeText" rows="5" style="width:100%;" placeholder="メモや追加情報を書けます"></textarea>
 </div>
-  
+ 
 <script>
 /* ========================
    データ：素材 × ランク別セット効果（編集しやすく）
