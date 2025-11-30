@@ -65,18 +65,6 @@ body {
   overflow: auto;
 }
 
-.slot-row {
-  display: grid;
-  grid-template-columns: 70px minmax(0, 1.4fr) 90px repeat(3, minmax(0, 1.2fr));
-  gap: 4px;
-  align-items: center;
-  font-size: 13px;
-}
-
-.slot-label {
-  font-weight: 600;
-}
-
 select {
   width: 100%;
   padding: 4px 6px;
@@ -162,15 +150,50 @@ select {
 .rarity-RARE { background: #e6efff; }
 .rarity-LEG { background: #fff4c2; }
 
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-  #slotArea {
-    max-height: none;
-  }
-  .top-controls {
-    margin-left: 0;
+.slot-row {
+  border-bottom: 1px solid #ddd;
+  padding: 6px 0;
+}
+
+.slot-line1,
+.slot-line2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.slot-label {
+  min-width: 60px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.slot-sub-label {
+  min-width: 80px;
+  font-size: 12px;
+  color: #666;
+}
+
+.slot-line1 select,
+.slot-line2 select {
+  flex: 1 1 auto;
+}
+
+/* スマホ幅のときは縦に詰め直す */
+@media (max-width: 768px) {
+  .slot-line1,
+  .slot-line2 {
     flex-wrap: wrap;
+  }
+
+  .slot-label,
+  .slot-sub-label {
+    width: 100%;
+  }
+
+  .slot-line1 select,
+  .slot-line2 select {
+    flex: 1 1 100%;
   }
 }
