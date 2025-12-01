@@ -237,3 +237,39 @@ select {
     grid-template-columns: 60px 1fr 1fr 1fr;
   }
 }
+/* 上段：ラベル 固定 / タリスマン 固定 / LEG 固定 */
+.slot-top {
+  display: grid;
+  grid-template-columns: 60px 130px 70px;  /* ← ぜんぶ固定！ */
+  gap: 6px;
+  align-items: center;
+}
+
+/* 下段：左に空白60px + ストーン3つ */
+.slot-bottom {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 1fr;
+  gap: 6px;
+}
+
+/* ストーン3つの select が暴れないように幅固定 */
+.slot-bottom select {
+  width: 100%;
+  min-width: 0;
+}
+
+/* タリスマン select も暴れない */
+.slot-top select {
+  width: 100%;
+  min-width: 0;
+}
+
+/* スマホ幅がもっと狭い時は縮める */
+@media (max-width: 380px) {
+  .slot-top {
+    grid-template-columns: 55px 115px 60px;
+  }
+  .slot-bottom {
+    grid-template-columns: 55px 1fr 1fr 1fr;
+  }
+}
