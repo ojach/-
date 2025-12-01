@@ -181,38 +181,48 @@ function enforceRowStoneUnique(row){
 }
 
 // 武器スロットのストーンを、空いている他スロットに「最初だけ」コピー
-function syncWeaponStonesToAllSlotsOnce(){
-  if (initialWeaponStoneSyncDone) return;
-
+function syncWeaponStonesToAllSlots() {
   const rows = Array.from(slotArea.querySelectorAll(".slot-row"));
   const weaponRow = rows.find(r => slotNameFromRow(r) === "武器");
   if (!weaponRow) return;
 
+  // 武器のストーン3つを取得
   const weaponStones = Array.from(weaponRow.querySelectorAll(".stone-select"))
     .map(sel => sel.value);
 
-  rows.forEach(row=>{
-    if (row === weaponRow) return; // 武器はスキップ
+  // すべての装備へコピー
+  rows.forEach(row => {
+    if (slotNameFromRow(row) === "武器") return; // 武器はスキップ
 
     const selects = Array.from(row.querySelectorAll(".stone-select"));
-    selects.forEach((sel, i)=>{
-      if (!sel.value && weaponStones[i]) {
-        sel.value = weaponStones[i];
+    selects.forEach((sel, idx) => {
+      const wStone = weaponStones[idx];
+
+      // 武器に石が入っていて、その装備の同じ枠が空ならコピーする
+      if (wStone && !sel.value) {
+        sel.value = wStone;
       }
     });
 
-    enforceRowStoneUnique(row);
+    // ▼ その装備内の重複チェックも再実行
+    const chosen = selects.map(s=>s.value).filter(Boolean);
+    selects.forEach(sel=>{
+      const cur = sel.value;
+      Array.from(sel.options).forEach(opt=>{
+        if (!opt.value) return;
+        opt.disabled = (opt.value !== cur && chosen.includes(opt.value));
+      });
+    });
   });
-
-  initialWeaponStoneSyncDone = true;
 }
-
 // ========== イベントハンドラ ==========
 
 function handleChange(e){
   const sel = e.target;
   const row = sel.closest(".slot-row");
-
+if (!initialStoneSyncDone && slotNameFromRow(row) === "武器") {
+  syncWeaponStonesToAllSlots();
+}
   // スロット内重複防止（ストーン）
   if (row && sel.classList.contains("stone-select")){
     enforceRowStoneUnique(row);
