@@ -470,7 +470,7 @@ function buildEffectTable(){
     const leg      = mat.sets.legendary|| {};
 
     const fmtSet = setObj=>{
-      const order = ["set2","set3","set4"];
+      const order = ["set4"];
       return order.map(key=>{
         if (!setObj[key]) return "";
         const stats = setObj[key].map(stat=>{
@@ -486,9 +486,9 @@ function buildEffectTable(){
     rows += `
       <tr>
         <td>${escapeHtml(name)}</td>
+         <td class="legend-col">${fmtSet(leg)}</td>
+         <td class="rare-col">${fmtSet(rare)}</td>
         <td class="uncommon-col">${fmtSet(uncommon)}</td>
-        <td class="rare-col">${fmtSet(rare)}</td>
-        <td class="legend-col">${fmtSet(leg)}</td>
       </tr>
     `;
   });
@@ -499,9 +499,9 @@ function buildEffectTable(){
         <thead>
           <tr>
             <th>タリスマン</th>
-            <th>UNC（アンコモン）</th>
-            <th>RARE（レア）</th>
-            <th>LEG（レジェンダリー）</th>
+            <th>LEG</th>
+            <th>RARE</th>
+            <th>UNC</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
