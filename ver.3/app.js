@@ -111,17 +111,18 @@ function buildSlots(){
 
   <!-- ◆ 2段目：パワーストーン（3枠） -->
   <div class="slot-bottom">
+    <div class="slot-bottom-spacer"></div>   <!-- ★ 空白カラム -->
     ${[1,2,3].map(()=>`
-      <select class="stone-select">
-        <option value="">ストーン選択</option>
-        ${
-          Object.keys(POWER_STONES)
-            .map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(POWER_STONES[n].ui)} (${escapeHtml(n)})</option>`)
-            .join("")
-        }
-      </select>
+        <select class="stone-select">
+          <option value="">ストーン選択</option>
+          ${
+            Object.keys(POWER_STONES)
+              .map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(POWER_STONES[n].ui)} (${escapeHtml(n)})</option>`)
+              .join("")
+          }
+        </select>
     `).join("")}
-  </div>
+</div>
 `;
 
     slotArea.appendChild(row);
