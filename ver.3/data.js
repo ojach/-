@@ -143,7 +143,7 @@ const STAT_MASTER = [
 ];
 
 // --- パワーストーン定義（魔攻/物防 修正済み） ---
-const POWER_STONE_MASTER = [
+const POWER_STONE_MASTER =	[
   {
     "パワーストーン": "物理攻撃",
     "UI略称": "物攻",
@@ -156,7 +156,7 @@ const POWER_STONE_MASTER = [
   {
     "パワーストーン": "魔法攻撃",
     "UI略称": "魔攻",
-    "ツールチップ（hoverで表示）": "Magic Attack",
+    "ツールチップ（hoverで表示）": "Physical Defense",
     "lv.60": 21,
     "lv.75": 26,
     "lv.100": 32,
@@ -165,7 +165,7 @@ const POWER_STONE_MASTER = [
   {
     "パワーストーン": "物理防御",
     "UI略称": "物防",
-    "ツールチップ（hoverで表示）": "Physical Defense",
+    "ツールチップ（hoverで表示）": "Magic Attack",
     "lv.60": 21,
     "lv.75": 26,
     "lv.100": 32,
@@ -238,19 +238,19 @@ const POWER_STONE_MASTER = [
     "パワーストーン": "クリティカル率",
     "UI略称": "クリ率",
     "ツールチップ（hoverで表示）": "Critical Hit Rate",
-    "lv.60": 1.1,
-    "lv.75": 1.2,
-    "lv.100": 1.3,
-    "lv.110": 1.3
+    "lv.60": 0.011,
+    "lv.75": 0.012,
+    "lv.100": 0.013,
+    "lv.110": 0.013
   },
   {
     "パワーストーン": "クリティカル防御率",
     "UI略称": "クリ倍",
     "ツールチップ（hoverで表示）": "Critical Damage",
-    "lv.60": 0.9,
-    "lv.75": 1,
-    "lv.100": 1,
-    "lv.110": 1
+    "lv.60": 0.009,
+    "lv.75": 0.01,
+    "lv.100": 0.01,
+    "lv.110": 0.01
   }
 ];
 
