@@ -134,22 +134,56 @@ function buildSlots(){
 }
 
 function handleChange(e){
-  // 同一装備内でパワーストーン重複しないように調整
   const row = e.target.closest(".slot-row");
+
+  // ▼ 1スロット内だけ重複チェック
   if (row){
     const stoneSelects = Array.from(row.querySelectorAll(".stone-select"));
     const chosen = stoneSelects.map(s=>s.value).filter(v=>v);
+
     stoneSelects.forEach(sel=>{
       const current = sel.value;
       Array.from(sel.options).forEach(opt=>{
         if (!opt.value) return;
+
+        // 同じスロット内だけ重複禁止（ここが重要）
         opt.disabled = (opt.value !== current && chosen.includes(opt.value));
       });
     });
   }
+
+  // ▼ 武器スロットの操作 → 全コピートリガー
+  const slotName = row?.querySelector(".slot-label")?.innerText;
+  if (slotName === "武器"){
+    const [s1, s2, s3] = row.querySelectorAll(".stone-select");
+    autoFillStonesFromWeapon(s1.value, s2.value, s3.value);
+  }
+
   updateAll();
 }
+function autoFillStonesFromWeapon(v1, v2, v3){
+  const rows = Array.from(slotArea.querySelectorAll(".slot-row"));
 
+  rows.forEach(row=>{
+    const label = row.querySelector(".slot-label").innerText;
+    if (label === "武器") return; // 武器は元データ
+
+    const selects = row.querySelectorAll(".stone-select");
+    if (v1) selects[0].value = v1;
+    if (v2) selects[1].value = v2;
+    if (v3) selects[2].value = v3;
+
+    // スロット内の重複解除・再計算
+    const chosen = [v1, v2, v3].filter(v=>v);
+    selects.forEach(sel=>{
+      const cur = sel.value;
+      Array.from(sel.options).forEach(opt=>{
+        if (!opt.value) return;
+        opt.disabled = (opt.value !== cur && chosen.includes(opt.value));
+      });
+    });
+  });
+}
 // 盾ON/OFF
 useShieldCheck.addEventListener("change", ()=>{
   if (useShieldCheck.checked){
