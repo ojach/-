@@ -221,3 +221,50 @@ select {
     flex: 1 1 100%;
   }
 }
+/* ========== 2段構成レイアウト ========== */
+
+.slot-row {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+/* 1段目：タリスマン */
+.slot-top-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap; /* スマホ時に自然に折り返し */
+}
+
+.slot-label {
+  width: 80px;
+  font-weight: bold;
+}
+
+/* 2段目：パワーストーン */
+.slot-bottom-line {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+  flex-wrap: wrap; /* スマホ幅対策 */
+}
+
+.slot-bottom-line select {
+  min-width: 120px;
+}
+
+/* スマホ最適化（狭い場合は縦詰め） */
+@media (max-width: 480px) {
+  .slot-top-line {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .slot-bottom-line {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+  .slot-label {
+    width: auto;
+  }
+}
